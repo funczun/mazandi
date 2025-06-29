@@ -8,12 +8,53 @@ import mapping
 
 app = FastAPI()
 
+# SVG 전체 크기
+SVG_WIDTH = 350
+SVG_HEIGHT = 170
+SVG_VIEWBOX = f"0 0 {SVG_WIDTH} {SVG_HEIGHT}"
+
+# 배경 사각형 크기 및 둥근 모서리
+BG_RECT_WIDTH = 349
+BG_RECT_HEIGHT = 169
+BG_RECT_RADIUS = 14
+BG_RECT_STROKE_WIDTH = 0.5
+
+# 핸들 텍스트 위치 및 크기, 애니메이션 딜레이
+HANDLE_X = 23
+HANDLE_Y = 32
+HANDLE_FONT_SIZE = 14
+HANDLE_ANIM_DELAY = 100
+
+# 티어 텍스트 위치 및 크기, 애니메이션 딜레이
+TIER_X = 327
+TIER_Y = 32
+TIER_FONT_SIZE = 12
+TIER_ANIM_DELAY = 300
+
+# 잔디 사각형 (heatmap boxes) 크기 및 둥근 모서리
+ZANDI_RECT_SIZE = 15
+ZANDI_RECT_RADIUS = 4
+
+# 잔디 사각형 시작 위치 (기준점)
+ZANDI_START_X = 23
+ZANDI_START_Y = 44
+
+# 잔디 사각형 레이아웃 간격
+ZANDI_COLUMNS = 7 # 한 주에 7일 (세로 줄 수)
+ZANDI_X_SPACING = 17 # 각 잔디 사각형의 가로 간격 (너비 포함)
+ZANDI_Y_SPACING = 16 # 각 잔디 사각형의 세로 간격 (높이 포함)
+
+# 잔디 사각형 애니메이션 딜레이
+ZANDI_BASE_ANIM_DELAY = 500
+ZANDI_ROW_ANIM_INCREMENT = 50 # 세로줄 (요일)별 딜레이 증가
+ZANDI_BOX_ANIM_INCREMENT = 4 # 개별 박스별 추가 딜레이
+
 def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dict):
     tier_name = tier.split(' ')[0]
     solved_max = solved_dict['solved_max'] if 'solved_max' in solved_dict else 0
 
     svg = f"""
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="350" height="170" viewBox="0 0 350 170">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{SVG_WIDTH}" height="{SVG_HEIGHT}" viewBox="{SVG_VIEWBOX}">
         <style type="text/css">
             <![CDATA[
                 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=block');
@@ -38,13 +79,13 @@ def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dic
         </style>
         <defs>
             <clipPath id="clip-Gold_-_1">
-            <rect width="350" height="170"/>
+            <rect width="{SVG_WIDTH}" height="{SVG_HEIGHT}"/>
             </clipPath>
         </defs>
         <g id="zandies">
-            <rect id="background" width="349" height="169" rx="14" fill="{color_theme['background']}" style="stroke-width:0.5; stroke:{color_theme['border']};"/>
-            <text id="handle" transform="translate(23 32)" fill="{color_theme[tier_name][5]}" font-size="14" font-family="NotoSansKR-Black, Noto Sans KR" font-weight="800" style="animation-delay:100ms">{handle}</text>
-            <text id="tier" transform="translate(327 32)" fill="{color_theme[tier_name][5]}" font-size="12" font-family="NotoSansKR-Black, Noto Sans KR" font-weight="800" text-anchor="end" style="animation-delay:300ms">{tier}</text>
+            <rect id="background" width="{BG_RECT_WIDTH}" height="{BG_RECT_HEIGHT}" rx="{BG_RECT_RADIUS}" fill="{color_theme['background']}" style="stroke-width:{BG_RECT_STROKE_WIDTH}; stroke:{color_theme['border']};"/>
+            <text id="handle" transform="translate({HANDLE_X} {HANDLE_Y})" fill="{color_theme[tier_name][5]}" font-size="{HANDLE_FONT_SIZE}" font-family="NotoSansKR-Black, Noto Sans KR" font-weight="800" style="animation-delay:{HANDLE_ANIM_DELAY}ms">{handle}</text>
+            <text id="tier" transform="translate({TIER_X} {TIER_Y})" fill="{color_theme[tier_name][5]}" font-size="{TIER_FONT_SIZE}" font-family="NotoSansKR-Black, Noto Sans KR" font-weight="800" text-anchor="end" style="animation-delay:{TIER_ANIM_DELAY}ms">{tier}</text>
     """
 
     idx = 0
@@ -54,8 +95,6 @@ def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dic
         # solved.ac streak specs:
         # n := clamp (solved_max) to [4, 50]
         # [0, 0], [1, 0.1n), [0.1n, 0.3n), [0.3n, 0.6n), [0.6n, 1.0n] -- all values are rounded up
-
-        # 현재 날짜의 풀이 수를 solved_count 변수에 저장
         solved_count = solved_dict.get(now_in_loop, 0)
 
         # 색상 임계값들을 미리 계산하여 조건문에서 재사용
@@ -77,10 +116,10 @@ def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dic
         
         nemo = f"""
         <rect class="zandi"
-                width="15" height="15" rx="4"
-                transform="translate({23 + (idx // 7) * 17} {44 + (idx % 7) * 16})" 
+                width="{ZANDI_RECT_SIZE}" height="{ZANDI_RECT_SIZE}" rx="{ZANDI_RECT_RADIUS}"
+                transform="translate({ZANDI_START_X + (idx // ZANDI_COLUMNS) * ZANDI_X_SPACING} {ZANDI_START_Y + (idx % ZANDI_COLUMNS) * ZANDI_Y_SPACING})" 
                 fill="{color}"
-                style="animation-delay:{500 + (idx % 7) * 50 + idx * 4}ms"/>
+                style="animation-delay:{ZANDI_BASE_ANIM_DELAY + (idx % ZANDI_COLUMNS) * ZANDI_ROW_ANIM_INCREMENT + idx * ZANDI_BOX_ANIM_INCREMENT}ms"/>
         """
         svg += nemo
         idx += 1

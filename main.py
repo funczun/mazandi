@@ -94,7 +94,7 @@ def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dic
   return svg
 
 @app.get("/api")
-async def generate_bedge(handle: str, theme: Optional[str] = "warm"):
+async def generate_badge(handle: str, theme: Optional[str] = "warm"):
     api = 'https://solved.ac/api/v3/user'
     user_info_url = api + '/show?handle=' + handle
     timestamp_url = api + '/history?handle=' + handle + '&topic=solvedCount'

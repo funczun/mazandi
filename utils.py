@@ -2,6 +2,19 @@
 import datetime
 import pytz
 
+# solved.ac 기준 하루의 시작은 KST(UTC+9) 오전 6시
+KST = pytz.timezone('Asia/Seoul')
+
+def get_solved_ac_effective_today():
+    now_kst = datetime.datetime.now(KST)
+    effective_today_kst = now_kst.replace(hour=6, minute=0, second=0, microsecond=0)
+
+    if now_kst.time() < datetime.time(6, 0, 0):
+        effective_today_kst -= datetime.timedelta(days=1)
+        
+    return effective_today_kst
+
+
 def boj_rating_to_lv(rating):
     if rating < 30: return 0
     if rating < 150: return rating // 30

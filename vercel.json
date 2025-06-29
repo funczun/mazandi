@@ -1,7 +1,12 @@
 {
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9"
+    }
+  },
   "build": {
     "env": {
-      "PYTHON_VERSION": "3.10.13"
+      "PYTHON_VERSION": "3.9.18"
     }
   }
 }

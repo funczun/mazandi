@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from string import ascii_lowercase
 from typing import Optional
 
-from utils import get_tier_id
+from .utils import get_tier_id
 
 # tier: None=random, 0=unknown, 1~5: bronze, 6~10: silver, ...
 def random_user(tier: Optional[str] = None):

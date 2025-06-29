@@ -2,9 +2,10 @@ from typing import Optional
 from fastapi import FastAPI, Response
 from httpx import AsyncClient
 
-from utils import create_solved_dict, boj_rating_to_lv, get_starting_day, get_tomorrow, get_tier_name
-from randoms import random_user, random_timestamp
-import mapping
+from .utils import create_solved_dict, boj_rating_to_lv, get_starting_day, get_tomorrow, get_tier_name
+from .randoms import random_user, random_timestamp
+from . import mapping
+
 import datetime
 
 app = FastAPI()

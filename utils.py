@@ -2,6 +2,8 @@
 import datetime
 import pytz
 
+from mapping import TIER_RATES
+
 # solved.ac 기준 하루의 시작은 KST(UTC+9) 오전 6시
 KST = pytz.timezone('Asia/Seoul')
 
@@ -18,17 +20,17 @@ def get_solved_ac_effective_day(dt_object: datetime.datetime = None) -> datetime
 
 
 def boj_rating_to_lv(rating):
-    if rating < 30: return 0
-    if rating < 150: return rating // 30
-    if rating < 200: return 5
-    if rating < 500: return (rating-200) // 100 + 6
-    if rating < 1400: return (rating-500) // 150 + 9
-    if rating < 1600: return 15
-    if rating < 1750: return 16
-    if rating < 1900: return 17
-    if rating < 2800: return (rating-1900) // 100 + 18
-    if rating < 3000: return (rating-2800) // 50 + 27
-    return 31
+    if rating >= TIER_RATES[31]:
+        return 31
+
+    if rating < TIER_RATES[0]:
+        return 0
+
+    for i in range(1, len(TIER_RATES)):
+        if rating < TIER_RATES[i]:
+            return i - 1
+
+    return 0
 
 
 def create_solved_dict(json_data):

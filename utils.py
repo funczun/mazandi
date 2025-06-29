@@ -5,14 +5,16 @@ import pytz
 # solved.ac 기준 하루의 시작은 KST(UTC+9) 오전 6시
 KST = pytz.timezone('Asia/Seoul')
 
-def get_solved_ac_effective_today():
-    now_kst = datetime.datetime.now(KST)
-    effective_today_kst = now_kst.replace(hour=6, minute=0, second=0, microsecond=0)
+def get_solved_ac_effective_day(dt_object: datetime.datetime = None) -> datetime.datetime:
+    if dt_object is None:
+        dt_object = datetime.datetime.now(KST)
 
-    if now_kst.time() < datetime.time(6, 0, 0):
-        effective_today_kst -= datetime.timedelta(days=1)
+    effective_day_kst = dt_object.replace(hour=6, minute=0, second=0, microsecond=0)
+    # 현재 시간이 오전 6시 이전이면 어제 날짜로 간주
+    if dt_object.time() < datetime.time(6, 0, 0):
+        effective_day_kst -= datetime.timedelta(days=1)
         
-    return effective_today_kst
+    return effective_day_kst.date()
 
 
 def boj_rating_to_lv(rating):
@@ -29,34 +31,32 @@ def boj_rating_to_lv(rating):
     return 31
 
 
-def create_solved_dict(json):
-    solved_dict = {}
-    # 18주 내 가장 많이 문제를 풀은 날의 solved count가 4 미만일 경우 4으로 설정
-    solved_dict['solved_max'] = 4
+def create_solved_dict(json_data):
+    solved_dict = {'solved_max': 4}
     
-    # solved.ac는 하루의 시작이 오전 6시이므로 UTC+3으로 변경
-    today = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
-    # Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6
-    weekday = today.isoweekday() % 7
+    effective_today_kst_date = get_solved_ac_effective_day()
+    
+    # 18주 시작점 계산 (18주 = 126일)
+    cutoff_date = effective_today_kst_date - datetime.timedelta(days=126)
 
-    for i, problem in enumerate(json):
-        timedata = problem['timestamp'].split('.')[0].replace('T', ' ')
-        trimmed_timedata = datetime.datetime.strptime(timedata, '%Y-%m-%d %H:%M:%S')
+    for problem in json_data:
+        timedata_str = problem['timestamp'].split('.')[0].replace('T', ' ')
+        utc_dt = datetime.datetime.strptime(timedata_str, '%Y-%m-%d %H:%M:%S').replace(tzinfo=pytz.utc)
         
-        KST = pytz.timezone('Europe/Moscow')        
-        timestamp = pytz.utc.localize(trimmed_timedata).astimezone(KST)
+        problem_kst_time = utc_dt.astimezone(KST) 
+        problem_effective_day_kst_date = get_solved_ac_effective_day(problem_kst_time)
         
         # 18주 내에 해결한 문제까지만 solved_dict에 저장
-        if today - timestamp > datetime.timedelta(120 + weekday):
+        if problem_effective_day_kst_date < cutoff_date:
             return solved_dict
         
-        timestamp = timestamp.strftime('%Y-%m-%d')
+        timestamp_key = problem_effective_day_kst_date.strftime('%Y-%m-%d')
 
-        if solved_dict.get(timestamp) == None:
-            solved_dict[timestamp] = 1
+        if solved_dict.get(timestamp_key) is None:
+            solved_dict[timestamp_key] = 1
         else:
-            solved_dict[timestamp] += 1
-            solved_dict['solved_max'] = max(solved_dict['solved_max'], solved_dict[timestamp])
+            solved_dict[timestamp_key] += 1
+            solved_dict['solved_max'] = max(solved_dict['solved_max'], solved_dict[timestamp_key])
             
     solved_dict['solved_max'] = min(solved_dict['solved_max'], 50)
 
@@ -64,13 +64,13 @@ def create_solved_dict(json):
 
 
 def get_starting_day():
-    # 오늘 날짜와 오늘로부터 17주 전 일요일의 날짜를 반환
-    # solved.ac는 하루의 시작이 오전 6시이므로 UTC+3으로 변경
-    today = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
-    # Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6
-    weekday = today.isoweekday() % 7
+    effective_today_kst_date = get_solved_ac_effective_day()
+
+    days_since_effective_sunday = effective_today_kst_date.isoweekday() % 7 
+    last_effective_sunday = effective_today_kst_date - datetime.timedelta(days=days_since_effective_sunday)
+    seventeen_weeks_ago_sunday = last_effective_sunday - datetime.timedelta(weeks=17)
     
-    return today.strftime('%Y-%m-%d'), (today - datetime.timedelta(days=weekday + 119)).strftime('%Y-%m-%d')
+    return effective_today_kst_date.strftime('%Y-%m-%d'), seventeen_weeks_ago_sunday.strftime('%Y-%m-%d')
 
 
 def get_tomorrow(timestamp):

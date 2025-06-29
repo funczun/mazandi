@@ -1,72 +1,41 @@
-# 🌱 mazandi
-🌱 solved.ac 잔디를 예쁘게 보여주는 프로필 카드
+# 🌱 Mazandi-36주
 
-## 주의사항
-- 백준 온라인 저지가 아닌 solved.ac를 기준으로 잔디를 생성합니다.
-- 잔디의 진함 정도가 ~solved.ac와 다를 수 있습니다.~ 이제 solved.ac와 일치합니다!
+본 프로젝트는 [원작](https://github.com/mazassumnida/mazandi)을 포크하여, **잔디 표시 기간을 기존 18주 → 36주로 수정한 버전**입니다.
 
-## install
-```
+## Install
+
+```bash
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn api.main:app --reload
 ```
 
 ## Usage
-### Theme - Warm (default)
+
+Solved.ac 잔디를 GitHub 프로필 `README.md`에 추가할 수 있습니다.  
+아래 `{handle}` 부분에 **자신의 Solved.ac 아이디**를 입력하세요.
+
+### Theme - Warm
+
+```markdown
+![Solved.ac Grass](https://mazandi-funczuns-projects.vercel.app/api?handle={handle})
 ```
-![mazandi profile](http://mazandi.herokuapp.com/api?handle={handle}&theme=warm)
-```
-```
-<img src="http://mazandi.herokuapp.com/api?handle={handle}&theme=warm"/>
-```
-
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=djs100201)
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=platinum&theme=warm)
-
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=gold)
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=pichulia)
-
-![](https://github.com/mazassumnida/mazandi/blob/main/readme_images/bronze_warm.svg)
-![](https://github.com/mazassumnida/mazandi/blob/main/readme_images/silver_warm.svg)
-
-![](http://mazandi.herokuapp.com/api?handle=Lawali)
-
-<br/>
 
 ### Theme - Cold
+
+```markdown
+![Solved.ac Grass (Cold)](https://mazandi-funczuns-projects.vercel.app/api?handle={handle}&theme=cold)
 ```
-![mazandi profile](http://mazandi.herokuapp.com/api?handle={handle}&theme=cold)
-```
-```
-<img src="http://mazandi.herokuapp.com/api?handle={handle}&theme=cold"/>
-```
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=swoon&theme=cold)
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=platinum&theme=cold)
-
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=gold&theme=cold)
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=pichulia&theme=cold)
-
-![](https://github.com/mazassumnida/mazandi/blob/main/readme_images/bronze_cold.svg)
-![](https://github.com/mazassumnida/mazandi/blob/main/readme_images/silver_cold.svg)
-
-
-![](http://mazandi.herokuapp.com/api?handle=jhnah917&theme=cold)
-
 
 ### Theme - Dark
-```
-![mazandi profile](http://mazandi.herokuapp.com/api?handle={handle}&theme=dark)
-```
-```
-<img src="http://mazandi.herokuapp.com/api?handle={handle}&theme=dark"/>
-```
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=diamond&theme=dark)
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=platinum&theme=dark)
 
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=gold&theme=dark)
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=pichulia&theme=dark)
+```markdown
+![Solved.ac Grass (Dark)](https://mazandi-funczuns-projects.vercel.app/api?handle={handle}&theme=dark)
+```
 
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=silver&theme=dark)
-![mazandi profile](http://mazandi.herokuapp.com/api/random?tier=bronze&theme=dark)
+## Additional Info
 
-![](http://mazandi.herokuapp.com/api?handle=jhnah917&theme=dark)
+**원작 프로젝트:**  
+[mazassumnida/mazandi](https://github.com/mazassumnida/mazandi)
+
+**이 프로젝트의 배포 URL:**  
+[https://mazandi-funczuns-projects.vercel.app](https://mazandi-funczuns-projects.vercel.app)

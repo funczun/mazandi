@@ -1,4 +1,4 @@
-# 🌱 Mazandi-36주
+# 🌱 Mazandi 36 Weeks
 
 본 프로젝트는 [원작](https://github.com/mazassumnida/mazandi)을 포크하여, **잔디 표시 기간을 기존 18주 → 36주로 수정한 버전**입니다.
 

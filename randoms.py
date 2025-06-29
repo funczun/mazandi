@@ -53,7 +53,7 @@ def random_user(tier: Optional[str] = None):
 def random_timestamp():
   current = datetime.now()
   result = []
-  count = 7 * 18   # 18 weeks
+  count = 7 * 36   # 36 weeks
   for i in range(count):
     result.append({
       'timestamp': current.isoformat(),

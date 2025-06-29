@@ -54,16 +54,26 @@ def make_heatmap_svg(handle: str, tier: str, solved_dict: dict, color_theme: dic
         # solved.ac streak specs:
         # n := clamp (solved_max) to [4, 50]
         # [0, 0], [1, 0.1n), [0.1n, 0.3n), [0.3n, 0.6n), [0.6n, 1.0n] -- all values are rounded up
-        if not solved_dict.get(now_in_loop):
-            color = color_theme[tier_name][0]
-        elif (solved_dict[now_in_loop]) >= ((solved_max * 6 + 9) // 10):
-            color = color_theme[tier_name][4]
-        elif (solved_dict[now_in_loop]) >= ((solved_max * 3 + 9) // 10):
-            color = color_theme[tier_name][3]
-        elif (solved_dict[now_in_loop]) >= ((solved_max * 1 + 9) // 10) and (solved_dict[now_in_loop]) > 1:
-            color = color_theme[tier_name][2]
+
+        # 현재 날짜의 풀이 수를 solved_count 변수에 저장
+        solved_count = solved_dict.get(now_in_loop, 0)
+
+        # 색상 임계값들을 미리 계산하여 조건문에서 재사용
+        # solved.ac의 소수점 올림 방식 ((값 * 비율 + 9) // 10)을 유지
+        threshold_10_percent = (solved_max * 1 + 9) // 10
+        threshold_30_percent = (solved_max * 3 + 9) // 10
+        threshold_60_percent = (solved_max * 6 + 9) // 10
+
+        if solved_count == 0:
+            color = color_theme[tier_name][0] # 해결 문제 0개 (가장 밝은 색상)
+        elif solved_count >= threshold_60_percent:
+            color = color_theme[tier_name][4] # 상위 40% 이상 (가장 진한 색상)
+        elif solved_count >= threshold_30_percent:
+            color = color_theme[tier_name][3] # 상위 70% 이상 (중간보다 진한 색상)
+        elif solved_count >= threshold_10_percent and solved_count > 1:
+            color = color_theme[tier_name][2] # 상위 90% 이상 (단, 1문제 초과)
         else:
-            color = color_theme[tier_name][1]
+            color = color_theme[tier_name][1] # 그 외 (1문제 이하 또는 1문제이지만 10% 미만)
         
         nemo = f"""
         <rect class="zandi"

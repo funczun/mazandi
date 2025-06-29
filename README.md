@@ -19,18 +19,21 @@ Solved.ac 잔디를 GitHub 프로필 `README.md`에 추가할 수 있습니다.
 ```markdown
 ![Solved.ac Grass](https://mazandi-funczuns-projects.vercel.app/api?handle={handle})
 ```
+![Solved.ac Ex](https://mazandi-funczuns-projects.vercel.app/api?handle=funczun)
 
 ### Theme - Cold
 
 ```markdown
 ![Solved.ac Grass (Cold)](https://mazandi-funczuns-projects.vercel.app/api?handle={handle}&theme=cold)
 ```
+![Solved.ac Ex (Cold)](https://mazandi-funczuns-projects.vercel.app/api?handle=funczun&theme=cold)
 
 ### Theme - Dark
 
 ```markdown
 ![Solved.ac Grass (Dark)](https://mazandi-funczuns-projects.vercel.app/api?handle={handle}&theme=dark)
 ```
+![Solved.ac Ex (Dark)](https://mazandi-funczuns-projects.vercel.app/api?handle=funczun&theme=dark)
 
 ## Additional Info
 
